@@ -1,50 +1,14 @@
-const express = require('express');
-const cors = require('cors');
-require('dotenv').config();
+// server.js
+const http = require('http');
 
-const authRoutes = require('./routes/auth.routes');
-
-const app = express();
-
-// CORS 설정[23]
-const allowedOrigins = process.env.ALLOWED_ORIGINS.split(',');
-
-app.use(cors({
-    origin: function (origin, callback) {
-        if (allowedOrigins.includes(origin) || !origin) {
-            callback(null, true);
-        } else {
-            callback(new Error('CORS 정책 위반'));
-        }
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
-// 미들웨어
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// 헬스 체크 엔드포인트
-app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'API is running' });
+const server = http.createServer((req, res) => {
+  // 브라우저에 HTML + UTF-8 헤더 전송
+  res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+  // 화면에 hello 출력
+  res.end('<h1>hello</h1>');
 });
 
-// 라우트
-app.use('/api/auth', authRoutes);
-
-// 에러 핸들링
-app.use((err, req, res, next) => {
-    console.error('Error:', err);
-    res.status(500).json({ 
-        error: 'Internal Server Error',
-        message: err.message 
-    });
-});
-
-// 서버 시작
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+// 3000번 포트에서 서버 시작
+server.listen(3000, () => {
+  console.log('http://localhost:3000 에서 접속하세요');
 });
