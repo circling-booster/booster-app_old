@@ -1,14 +1,38 @@
-// server.js
-const http = require('http');
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const { initializePool } = require('./config/database');
+const authRoutes = require('./routes/auth');
+require('dotenv').config();
 
-const server = http.createServer((req, res) => {
-  // 브라우저에 HTML + UTF-8 헤더 전송
-  res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-  // 화면에 hello 출력
-  res.end('<h1>hello</h1>');
+const app = express();
+
+// 미들웨어
+app.use(helmet());
+app.use(cors());
+app.use(express.json());
+
+// 라우트
+app.use('/api/auth', authRoutes);
+
+// 기본 상태 체크
+app.get('/health', (req, res) => {
+  res.json({ status: 'OK' });
 });
 
-// 3000번 포트에서 서버 시작
-server.listen(3000, () => {
-  console.log('http://localhost:3000 에서 접속하세요');
-});
+// 서버 시작
+const PORT = process.env.PORT || 3000;
+
+async function start() {
+  try {
+    await initializePool();
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error('Server startup error:', err);
+    process.exit(1);
+  }
+}
+
+start();
