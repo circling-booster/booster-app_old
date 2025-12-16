@@ -6,8 +6,8 @@ const config = {
   database: process.env.DB_NAME,
   authentication: {
     // Microsoft Entra 인증 사용
-    type: 'azure-active-directory-default',
-    // 또는: 'azure-active-directory-msi-app-service' (Azure Web App)
+   // type: 'azure-active-directory-default',
+    type : 'azure-active-directory-msi-app-service'// (Azure Web App)
     // 또는: 'azure-active-directory-msi-vm' (Azure VM)
   },
   options: {
